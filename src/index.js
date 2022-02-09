@@ -39,23 +39,37 @@ var bigTriangle1 = new Konva.Line({
 });
 
 var bigTriangle2 = new Konva.Line({
-  points: [100, 100, 100, 300, 200, 200],
+  x: 150,
+  y: 200,
+  points: [0, 0, 0, 200, 100, 100],
   fill: 'yellow',
   stroke: 'black',
   strokeWidth: 1,
   closed: true,
   draggable: true,
   name: 'bigTriangle2',
+  offset: {
+    x: 50,
+    y: 100
+  }
 });
 
 bigTriangle2.on('click', function () {
-  var matrix = this.getAbsoluteTransform().getMatrix();
-  var attrs = decompose(matrix);
+  // var matrix = this.getAbsoluteTransform().getMatrix();
+  // var attrs = decompose(matrix);
 
-  console.log(matrix, attrs)
-  // this.setAbsolutePosition(this.getTranslation())
+  console.log(this.getTransform().getTranslation())
+  // this.setAttrs(attrs)
+  // this.x(150)
+  // this.y(150)
   this.rotate(45)
-  this.getTransform().translate(200, 0)
+  // this.x(100)
+  // this.y(100)
+  // this.position(100, 100)
+  // this.getTransform().translate(141, -141)
+  console.log(this.getTransform().getTranslation())
+
+  // this.setAbsolutePosition(this.getTransform().getTranslation())
 });
 
 
@@ -143,6 +157,23 @@ var middleTriangle = new Konva.Line({
   name: 'square',
 })
 
+middleTriangle.on('click', function () {
+  console.log(this.rotation())
+  this.rotation(45)
+  // var matrix = this.getAbsoluteTransform().getMatrix();
+  // var attrs = decompose(matrix);
+  // const translation = this.getTransform().getTranslation()
+  // console.log()
+  // this.setAttrs(attrs)
+  // this.save()
+  // this.rotate(45)
+  // this.restore()
+  // this.getTransform().translate(141, -141)
+  // console.log(this.getTransform().getTranslation())
+
+  // this.setAbsolutePosition(translation)
+});
+
 var parallelogram = new Konva.Line({
   points: [300, 100, 250, 150, 250, 250, 300, 200],
   fill: 'orange',
@@ -153,9 +184,11 @@ var parallelogram = new Konva.Line({
   name: 'square',
 })
 parallelogram.on('click', function () {
-  console.log(this.points())
-  var fill = this.fill() == 'yellow' ? '#00D2FF' : 'yellow';
-  this.fill(fill);
+  // console.log(this.points())
+  // var fill = this.fill() == 'yellow' ? '#00D2FF' : 'yellow';
+  // this.fill(fill);
+  this.rotate(45)
+  this.getTransform().rotate(45)
 });
 
 var triangle = new Konva.RegularPolygon({
@@ -171,9 +204,9 @@ var triangle = new Konva.RegularPolygon({
 });
 
 var circle = new Konva.Circle({
-  x: 380,
-  y: stage.height() / 2,
-  radius: 70,
+  x: 0,
+  y: 0,
+  radius: 141,
   fill: 'red',
   stroke: 'black',
   strokeWidth: 1,
@@ -253,7 +286,7 @@ stage.getContent().addEventListener(
   false
 );
 
-layer.add(triangle);
+// layer.add(triangle);
 layer.add(circle);
 layer.add(bigTriangle1)
 layer.add(bigTriangle2)
