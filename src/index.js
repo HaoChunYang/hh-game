@@ -1,3 +1,4 @@
+import style from './style/style.css'
 import Konva from 'konva'
 
 Konva.hitOnDragEnabled = true;
@@ -27,9 +28,12 @@ var stage = new Konva.Stage({
 });
 
 var layer = new Konva.Layer();
+const targetLayer = new Konva.Layer();
 
-var bigTriangle1 = new Konva.Line({
-  points: [100, 100, 300, 100, 200, 200],
+const bigTriangle1 = new Konva.Line({
+  x: 200,
+  y: 150,
+  points: [-100, -50, 100, -50, 0, 50],
   fill: 'red',
   stroke: 'black',
   strokeWidth: 1,
@@ -38,87 +42,22 @@ var bigTriangle1 = new Konva.Line({
   name: 'bigTriangle1',
 });
 
-var bigTriangle2 = new Konva.Line({
+const bigTriangle2 = new Konva.Line({
   x: 150,
   y: 200,
-  points: [0, 0, 0, 200, 100, 100],
+  points: [-50, -100, 50, 0, -50, 100],
   fill: 'yellow',
   stroke: 'black',
   strokeWidth: 1,
   closed: true,
   draggable: true,
   name: 'bigTriangle2',
-  offset: {
-    x: 50,
-    y: 100
-  }
 });
 
-bigTriangle2.on('click', function () {
-  // var matrix = this.getAbsoluteTransform().getMatrix();
-  // var attrs = decompose(matrix);
-
-  console.log(this.getTransform().getTranslation())
-  // this.setAttrs(attrs)
-  // this.x(150)
-  // this.y(150)
-  this.rotate(45)
-  // this.x(100)
-  // this.y(100)
-  // this.position(100, 100)
-  // this.getTransform().translate(141, -141)
-  console.log(this.getTransform().getTranslation())
-
-  // this.setAbsolutePosition(this.getTransform().getTranslation())
-});
-
-
-function decompose (mat) {
-  var a = mat[0];
-  var b = mat[1];
-  var c = mat[2];
-  var d = mat[3];
-  var e = mat[4];
-  var f = mat[5];
-
-  var delta = a * d - b * c;
-
-  let result = {
-    x: e,
-    y: f,
-    rotation: 0,
-    scaleX: 0,
-    scaleY: 0,
-    skewX: 0,
-    skewY: 0,
-  };
-
-  // Apply the QR-like decomposition.
-  if (a != 0 || b != 0) {
-    var r = Math.sqrt(a * a + b * b);
-    result.rotation = b > 0 ? Math.acos(a / r) : -Math.acos(a / r);
-    result.scaleX = r;
-    result.scaleY = delta / r;
-    result.skewX = Math.atan((a * c + b * d) / (r * r));
-    result.scleY = 0;
-  } else if (c != 0 || d != 0) {
-    var s = Math.sqrt(c * c + d * d);
-    result.rotation =
-      Math.PI / 2 - (d > 0 ? Math.acos(-c / s) : -Math.acos(c / s));
-    result.scaleX = delta / s
-    result.scaleY = s;
-    result.skewX = 0
-    result.skewY = Math.atan((a * c + b * d) / (s * s));
-  } else {
-    // a = b = c = d = 0
-  }
-
-  result.rotation *= 180 / Math.PI;
-  return result;
-}
-
-var square = new Konva.Line({
-  points: [200, 200, 250, 250, 200, 300, 150, 250],
+const square = new Konva.Line({
+  x: 200,
+  y: 250,
+  points: [0, -50, 50, 0, 0, 50, -50, 0],
   fill: 'green',
   stroke: 'black',
   strokeWidth: 1,
@@ -127,8 +66,10 @@ var square = new Konva.Line({
   name: 'square',
 });
 
-var smallTriangle1 = new Konva.Line({
-  points: [100, 300, 150, 250, 200, 300],
+const smallTriangle1 = new Konva.Line({
+  x: 150,
+  y: 275,
+  points: [0, -25, 50, 25, -50, 25],
   fill: 'pink',
   stroke: 'black',
   strokeWidth: 1,
@@ -137,8 +78,10 @@ var smallTriangle1 = new Konva.Line({
   name: 'square',
 })
 
-var smallTriangle2 = new Konva.Line({
-  points: [200, 200, 250, 150, 250, 250],
+const smallTriangle2 = new Konva.Line({
+  x: 225,
+  y: 200,
+  points: [25, -50, 25, 50, -25, 0],
   fill: 'lightblue',
   stroke: 'black',
   strokeWidth: 1,
@@ -147,8 +90,10 @@ var smallTriangle2 = new Konva.Line({
   name: 'square',
 })
 
-var middleTriangle = new Konva.Line({
-  points: [200, 300, 300, 300, 300, 200],
+const middleTriangle = new Konva.Line({
+  x: 275,
+  y: 275,
+  points: [25, -75, 25, 25, -75, 25],
   fill: 'purple',
   stroke: 'black',
   strokeWidth: 1,
@@ -157,25 +102,10 @@ var middleTriangle = new Konva.Line({
   name: 'square',
 })
 
-middleTriangle.on('click', function () {
-  console.log(this.rotation())
-  this.rotation(45)
-  // var matrix = this.getAbsoluteTransform().getMatrix();
-  // var attrs = decompose(matrix);
-  // const translation = this.getTransform().getTranslation()
-  // console.log()
-  // this.setAttrs(attrs)
-  // this.save()
-  // this.rotate(45)
-  // this.restore()
-  // this.getTransform().translate(141, -141)
-  // console.log(this.getTransform().getTranslation())
-
-  // this.setAbsolutePosition(translation)
-});
-
-var parallelogram = new Konva.Line({
-  points: [300, 100, 250, 150, 250, 250, 300, 200],
+const parallelogram = new Konva.Line({
+  x: 275,
+  y: 175,
+  points: [25, -75, 25, 25, -25, 75, -25, -25],
   fill: 'orange',
   stroke: 'black',
   strokeWidth: 1,
@@ -183,13 +113,6 @@ var parallelogram = new Konva.Line({
   draggable: true,
   name: 'square',
 })
-parallelogram.on('click', function () {
-  // console.log(this.points())
-  // var fill = this.fill() == 'yellow' ? '#00D2FF' : 'yellow';
-  // this.fill(fill);
-  this.rotate(45)
-  this.getTransform().rotate(45)
-});
 
 var triangle = new Konva.RegularPolygon({
   x: 190,
@@ -216,7 +139,7 @@ var circle = new Konva.Circle({
 
 stage.on('tap', function (evt) {
   // set active shape
-  var shape = evt.target;
+  const shape = evt.target;
   activeShape =
     activeShape && activeShape.getName() === shape.getName()
       ? null
@@ -251,6 +174,7 @@ stage.getContent().addEventListener(
   function (evt) {
     var touch1 = evt.touches[0];
     var touch2 = evt.touches[1];
+    console.log(touch1, touch2)
 
     if (touch1 && touch2 && activeShape) {
       var dist = getDistance(
@@ -286,13 +210,82 @@ stage.getContent().addEventListener(
   false
 );
 
-// layer.add(triangle);
-layer.add(circle);
-layer.add(bigTriangle1)
-layer.add(bigTriangle2)
-layer.add(square);
-layer.add(smallTriangle1)
-layer.add(smallTriangle2)
-layer.add(middleTriangle)
-layer.add(parallelogram)
+const shapes = [bigTriangle1, bigTriangle2, square, smallTriangle1, smallTriangle2, middleTriangle, parallelogram]
+shapes.forEach(shape => {
+  shape.on('click', function () {
+    this.rotate(45)
+  })
+  shape.on('dragstart', function () {
+    this.moveToTop();
+  });
+  shape.on('dragend', function () {
+    console.log('dragend:', this.position())
+  })
+  shape.on('mouseover', function () {
+    this.moveToTop()
+    shape.setAttrs({
+      stroke: 'black',
+      strokeWidth: 3,
+    })
+    document.body.style.cursor = 'pointer';
+  });
+  shape.on('mouseout', function () {
+    shape.setAttrs({
+      strokeWidth: 1
+    })
+    document.body.style.cursor = 'default';
+  });
+  layer.add(shape)
+})
+
+/**
+ * target layer
+ */
+
+const targetShaps = {
+  bigTriangle1: {
+    x: 25,
+    y: 75,
+    rotation: 45 * 3,
+    points: [-100, -50, 100, -50, 0, 50],
+  },
+  bigTriangle2: {
+    x: 75,
+    y: 25,
+    rotation: 45 * 5,
+    points: [-50, -100, 50, 0, -50, 100],
+  },
+  square: {
+    x: 125,
+    y: 75,
+    rotation: 45, // 其实有 4 种
+    points: [0, -50, 50, 0, 0, 50, -50, 0],
+  },
+  smallTriangle1: {
+    x: 125,
+    y: 25,
+    rotation: 45 * 7,
+    points: [0, -25, 50, 25, -50, 25],
+  },
+  smallTriangle2: {
+    x: 175,
+    y: 75,
+    rotation: 45 * 7,
+    points: [25, -50, 25, 50, -25, 0],
+  },
+  middleTriangle: {
+    x: 175,
+    y: 50,
+    rotation: 45 * 3,
+    points: [25, -75, 25, 25, -75, 25],
+  },
+  parallelogram: {
+    x: 150,
+    y: 50,
+    rotation: 45, // || 45 * 5 两种
+    points: [25, -75, 25, 25, -25, 75, -25, -25],
+  }
+}
+
+
 stage.add(layer);
