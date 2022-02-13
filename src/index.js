@@ -28,7 +28,10 @@ var stage = new Konva.Stage({
 });
 
 var layer = new Konva.Layer();
-const targetLayer = new Konva.Layer();
+const targetLayer = new Konva.Layer({
+  x: 400,
+  y: 100
+});
 
 const bigTriangle1 = new Konva.Line({
   x: 200,
@@ -75,7 +78,7 @@ const smallTriangle1 = new Konva.Line({
   strokeWidth: 1,
   closed: true,
   draggable: true,
-  name: 'square',
+  name: 'smallTriangle1',
 })
 
 const smallTriangle2 = new Konva.Line({
@@ -87,7 +90,7 @@ const smallTriangle2 = new Konva.Line({
   strokeWidth: 1,
   closed: true,
   draggable: true,
-  name: 'square',
+  name: 'smallTriangle2',
 })
 
 const middleTriangle = new Konva.Line({
@@ -99,7 +102,7 @@ const middleTriangle = new Konva.Line({
   strokeWidth: 1,
   closed: true,
   draggable: true,
-  name: 'square',
+  name: 'middleTriangle',
 })
 
 const parallelogram = new Konva.Line({
@@ -111,7 +114,7 @@ const parallelogram = new Konva.Line({
   strokeWidth: 1,
   closed: true,
   draggable: true,
-  name: 'square',
+  name: 'parallelogram',
 })
 
 var triangle = new Konva.RegularPolygon({
@@ -129,7 +132,7 @@ var triangle = new Konva.RegularPolygon({
 var circle = new Konva.Circle({
   x: 0,
   y: 0,
-  radius: 141,
+  radius: 10,
   fill: 'red',
   stroke: 'black',
   strokeWidth: 1,
@@ -210,6 +213,20 @@ stage.getContent().addEventListener(
   false
 );
 
+function isNearOutline (shape, target) {
+  const a = shape;
+  const o = target;
+  const ax = a.x() - 400;
+  const ay = a.y() - 100;
+  const arotation = a.rotation() % 360
+
+  if (ax > o.x - 40 && ax < o.x + 40 && ay > o.y - 40 && ay < o.y + 40 && arotation === o.rotation) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 const shapes = [bigTriangle1, bigTriangle2, square, smallTriangle1, smallTriangle2, middleTriangle, parallelogram]
 shapes.forEach(shape => {
   shape.on('click', function () {
@@ -219,7 +236,13 @@ shapes.forEach(shape => {
     this.moveToTop();
   });
   shape.on('dragend', function () {
-    console.log('dragend:', this.position())
+    const name = this.name()
+    console.log('dragend:', this.name(), this.rotation(), this.position(), targetShapes[name])
+    console.log('-----', isNearOutline(this, targetShapes[name]))
+    if (isNearOutline(this, targetShapes[name])) {
+      this.x(targetShapes[name].x + 400)
+      this.y(targetShapes[name].y + 100)
+    }
   })
   shape.on('mouseover', function () {
     this.moveToTop()
@@ -241,51 +264,75 @@ shapes.forEach(shape => {
 /**
  * target layer
  */
+const bigTriangleRightEdge = 200 / Math.SQRT2;
+const bigTriangleBevelEdge = 200;
+const smallTriangleRightEdge = 100 / Math.SQRT2;
+const smallTriangleBevelEdge = 100;
+const middleTriangleRigthEdge = 100;
+const middleTriangleBevelEdge = 100 * Math.SQRT2;
+const squareEdge = 100 / Math.SQRT2;
 
-const targetShaps = {
+const targetShapes = {
   bigTriangle1: {
-    x: 25,
-    y: 75,
-    rotation: 45 * 3,
+    x: bigTriangleRightEdge * 0.75,
+    y: bigTriangleRightEdge * 0.25,
+    rotation: 45 * 5,
     points: [-100, -50, 100, -50, 0, 50],
   },
   bigTriangle2: {
-    x: 75,
-    y: 25,
-    rotation: 45 * 5,
+    x: bigTriangleRightEdge * 0.25,
+    y: bigTriangleRightEdge * 0.75,
+    rotation: 45 * 3,
     points: [-50, -100, 50, 0, -50, 100],
   },
   square: {
-    x: 125,
-    y: 75,
+    x: bigTriangleRightEdge * 1.25,
+    y: bigTriangleRightEdge * 0.75,
     rotation: 45, // 其实有 4 种
     points: [0, -50, 50, 0, 0, 50, -50, 0],
   },
   smallTriangle1: {
-    x: 125,
-    y: 25,
+    x: bigTriangleRightEdge + smallTriangleRightEdge * 0.25,
+    y: smallTriangleRightEdge * 0.25,
     rotation: 45 * 7,
     points: [0, -25, 50, 25, -50, 25],
   },
   smallTriangle2: {
-    x: 175,
-    y: 75,
+    x: bigTriangleRightEdge * 1.50 + smallTriangleRightEdge * 0.25,
+    y: bigTriangleRightEdge * 0.75 + smallTriangleRightEdge * 0.25,
     rotation: 45 * 7,
     points: [25, -50, 25, 50, -25, 0],
   },
   middleTriangle: {
-    x: 175,
-    y: 50,
+    x: bigTriangleRightEdge * 1.75,
+    y: bigTriangleRightEdge * 0.50,
     rotation: 45 * 3,
     points: [25, -75, 25, 25, -75, 25],
   },
   parallelogram: {
-    x: 150,
-    y: 50,
+    x: bigTriangleRightEdge * 1.50,
+    y: bigTriangleRightEdge * 0.25,
     rotation: 45, // || 45 * 5 两种
     points: [25, -75, 25, 25, -25, 75, -25, -25],
   }
 }
+
+for (const shapeKey in targetShapes) {
+  if (Object.hasOwnProperty.call(targetShapes, shapeKey)) {
+    const shapeAttr = targetShapes[shapeKey];
+    const shap = new Konva.Line({
+      fill: 'lightgray',
+      stroke: 'black',
+      strokeWidth: 1,
+      closed: true,
+      name: shapeKey,
+    });
+    shap.setAttrs(shapeAttr)
+    targetLayer.add(shap)
+  }
+}
+// targetLayer.add(circle)
+stage.add(targetLayer)
 
 
 stage.add(layer);
