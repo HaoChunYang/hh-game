@@ -10,6 +10,9 @@ var lastDist = 0;
 var startScale = 1;
 var activeShape = null;
 
+const result = [0, 0, 0, 0, 0, 0, 0]
+let score = 0
+
 function getDistance (p1, p2) {
   return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 }
@@ -27,15 +30,18 @@ var stage = new Konva.Stage({
   },
 });
 
-var layer = new Konva.Layer();
+var layer = new Konva.Layer({
+  x: 100,
+  y: 100
+});
 const targetLayer = new Konva.Layer({
   x: 400,
   y: 100
 });
 
 const bigTriangle1 = new Konva.Line({
-  x: 200,
-  y: 150,
+  x: 100,
+  y: 50,
   points: [-100, -50, 100, -50, 0, 50],
   fill: 'red',
   stroke: 'black',
@@ -46,8 +52,8 @@ const bigTriangle1 = new Konva.Line({
 });
 
 const bigTriangle2 = new Konva.Line({
-  x: 150,
-  y: 200,
+  x: 50,
+  y: 100,
   points: [-50, -100, 50, 0, -50, 100],
   fill: 'yellow',
   stroke: 'black',
@@ -58,8 +64,8 @@ const bigTriangle2 = new Konva.Line({
 });
 
 const square = new Konva.Line({
-  x: 200,
-  y: 250,
+  x: 100,
+  y: 150,
   points: [0, -50, 50, 0, 0, 50, -50, 0],
   fill: 'green',
   stroke: 'black',
@@ -70,8 +76,8 @@ const square = new Konva.Line({
 });
 
 const smallTriangle1 = new Konva.Line({
-  x: 150,
-  y: 275,
+  x: 50,
+  y: 175,
   points: [0, -25, 50, 25, -50, 25],
   fill: 'pink',
   stroke: 'black',
@@ -82,8 +88,8 @@ const smallTriangle1 = new Konva.Line({
 })
 
 const smallTriangle2 = new Konva.Line({
-  x: 225,
-  y: 200,
+  x: 125,
+  y: 100,
   points: [25, -50, 25, 50, -25, 0],
   fill: 'lightblue',
   stroke: 'black',
@@ -94,8 +100,8 @@ const smallTriangle2 = new Konva.Line({
 })
 
 const middleTriangle = new Konva.Line({
-  x: 275,
-  y: 275,
+  x: 175,
+  y: 175,
   points: [25, -75, 25, 25, -75, 25],
   fill: 'purple',
   stroke: 'black',
@@ -106,8 +112,8 @@ const middleTriangle = new Konva.Line({
 })
 
 const parallelogram = new Konva.Line({
-  x: 275,
-  y: 175,
+  x: 175,
+  y: 75,
   points: [25, -75, 25, 25, -25, 75, -25, -25],
   fill: 'orange',
   stroke: 'black',
@@ -216,8 +222,8 @@ stage.getContent().addEventListener(
 function isNearOutline (shape, target) {
   const a = shape;
   const o = target;
-  const ax = a.x() - 400;
-  const ay = a.y() - 100;
+  const ax = a.x() - 300;
+  const ay = a.y();
   const arotation = a.rotation() % 360
 
   if (ax > o.x - 40 && ax < o.x + 40 && ay > o.y - 40 && ay < o.y + 40 && arotation === o.rotation) {
@@ -225,6 +231,14 @@ function isNearOutline (shape, target) {
   } else {
     return false;
   }
+}
+
+function drawResult (background, img, text) {
+  var context = background.getContext();
+  context.setAttr('font', '30pt Calibri');
+  context.setAttr('textAlign', 'center');
+  context.setAttr('fillStyle', 'red');
+  context.fillText(text, background.getStage().width() / 2, 40);
 }
 
 const shapes = [bigTriangle1, bigTriangle2, square, smallTriangle1, smallTriangle2, middleTriangle, parallelogram]
@@ -240,8 +254,13 @@ shapes.forEach(shape => {
     console.log('dragend:', this.name(), this.rotation(), this.position(), targetShapes[name])
     console.log('-----', isNearOutline(this, targetShapes[name]))
     if (isNearOutline(this, targetShapes[name])) {
-      this.x(targetShapes[name].x + 400)
-      this.y(targetShapes[name].y + 100)
+      this.x(targetShapes[name].x + 300)
+      this.y(targetShapes[name].y)
+      score += 1
+    }
+
+    if (score >= 7) {
+      drawResult(targetLayer, null, 'H 加油！情人节快乐！')
     }
   })
   shape.on('mouseover', function () {
